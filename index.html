@@ -1,1131 +1,576 @@
-</script>
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jashan Kamboj — Portfolio</title>
-<meta name="description" content="Portfolio of Jashan Kamboj — Computer Science Engineer specializing in IoT Systems, AI, and Smart Water Leakage Detection.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0B101B;
-    --ink-dark:#070B13;
-    --panel:#131B2C;
-    --panel-2:#0E1524;
-    --panel-hover:#1A243B;
-    --line: rgba(232, 236, 244, 0.12);
-    --line-strong: rgba(79, 209, 197, 0.35);
-    --comic-border: #23304B;
-    --comic-border-glow: #4FD1C5;
+    --ink:#0E1420;
+    --panel:#151D2E;
+    --panel-2:#111827;
+    --line: rgba(232,236,244,0.10);
+    --line-strong: rgba(232,236,244,0.18);
     --text:#E8ECF4;
-    --muted:#95A1BD;
-    --muted-2:#626E8B;
+    --muted:#8A93AB;
+    --muted-2:#5E6883;
     --signal:#4FD1C5;
-    --signal-dim: rgba(79, 209, 197, 0.14);
-    --amber:#F5A623;
-    --amber-dim: rgba(245, 166, 35, 0.14);
-    --comic-yellow: #FFD15C;
-    --comic-blue: #38BDF8;
-    --comic-red: #FB7185;
-    --radius: 8px;
-    --maxw: 920px;
-    --shadow-comic: 5px 5px 0px rgba(0, 0, 0, 0.5);
-    --shadow-cyan: 5px 5px 0px rgba(79, 209, 197, 0.25);
+    --signal-dim: rgba(79,209,197,0.14);
+    --amber:#F2A65A;
+    --amber-dim: rgba(242,166,90,0.14);
+    --radius: 6px;
+    --maxw: 880px;
   }
 
-  *{ box-sizing:border-box; margin:0; padding:0; }
+  *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{
+    margin:0;
     background:
-      radial-gradient(circle at 1px 1px, rgba(79,209,197,0.06) 1px, transparent 0),
-      radial-gradient(ellipse 950px 550px at 15% -5%, rgba(79,209,197,0.12), transparent 60%),
-      radial-gradient(ellipse 800px 500px at 95% 15%, rgba(245,166,35,0.08), transparent 55%),
+      radial-gradient(ellipse 900px 500px at 12% -10%, rgba(79,209,197,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(242,166,90,0.06), transparent 55%),
       var(--ink);
-    background-size: 24px 24px, 100% 100%, 100% 100%, 100% 100%;
     background-attachment: fixed;
     color:var(--text);
-    font-family:'IBM Plex Sans', -apple-system, sans-serif;
+    font-family:'IBM Plex Sans', sans-serif;
     font-size:16px;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
-    overflow-x: hidden;
   }
-
-  a{ color:inherit; text-decoration:none; }
-  h1,h2,h3,h4{
+  a{ color:inherit; }
+  h1,h2,h3{
     font-family:'Space Grotesk', sans-serif;
-    font-weight:700;
-    letter-spacing:-0.02em;
+    margin:0;
+    font-weight:600;
+    letter-spacing:-0.01em;
   }
   .mono{ font-family:'IBM Plex Mono', monospace; }
-  
-  .wrap{
-    max-width: 1140px;
-    margin: 0 auto;
-    padding: 0 32px;
+  .wrap{ max-width: 1120px; margin:0 auto; padding: 0 32px; }
+  .prose{ max-width: var(--maxw); }
+
+  :focus-visible{ outline: 2px solid var(--signal); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   }
 
-  :focus-visible{
-    outline: 2px solid var(--signal);
-    outline-offset: 3px;
+  /* ---------- Background canvas ---------- */
+  #netbg{
+    position: fixed; inset: 0; z-index: -1;
+    width: 100%; height: 100%;
+    opacity: 0.55;
   }
 
-  /* ---------- Header Navigation ---------- */
+  /* ---------- Scroll progress ---------- */
+  .progress-track{
+    position: sticky; top:0; z-index: 21;
+    height: 2px; background: transparent;
+  }
+  .progress-bar{
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--signal), var(--amber));
+    transition: width .1s linear;
+  }
+
+  /* ---------- Back to top ---------- */
+  .back-to-top{
+    position: fixed; right: 24px; bottom: 24px; z-index: 25;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--panel); border: 1px solid var(--line-strong);
+    color: var(--signal);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    opacity: 0; pointer-events:none; transform: translateY(8px);
+    transition: opacity .25s ease, transform .25s ease, border-color .2s ease;
+  }
+  .back-to-top.visible{ opacity: 1; pointer-events:auto; transform: translateY(0); }
+  .back-to-top:hover{ border-color: var(--signal); }
+
+  /* ---------- Header ---------- */
   header{
-    position: sticky; top:0; z-index: 100;
-    background: rgba(11, 16, 27, 0.88);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 2px solid var(--comic-border);
+    position: sticky; top:0; z-index: 20;
+    background: rgba(14,20,32,0.86);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
   }
   .header-row{
     display:flex; align-items:center; justify-content:space-between;
-    padding: 16px 32px;
-    max-width: 1140px; margin: 0 auto;
+    padding: 18px 32px;
+    max-width: 1120px; margin:0 auto;
   }
   .brand{
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:baseline; gap:10px;
     font-family:'Space Grotesk', sans-serif;
-    font-weight:700; font-size:1.15rem;
+    font-weight:600; font-size:1.05rem;
+  }
+  .brand-dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 3px var(--signal-dim);
+  }
+  nav{ display:flex; gap: 28px; }
+  nav a{
+    text-decoration:none; color:var(--muted); font-size:0.92rem;
+    padding: 4px 2px; border-bottom: 1px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  nav a:hover{ color:var(--text); border-color: var(--line-strong); }
+  nav a.active{ color: var(--signal); border-color: var(--signal); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding: 84px 0 64px; border-bottom: 1px solid var(--line); }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.1fr 0.9fr;
+    gap: 56px; align-items:center;
+  }
+  .name-display{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size: clamp(2.6rem, 7.4vw, 4.6rem);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    margin: 0 0 22px;
     color: var(--text);
   }
-  .brand-badge{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: var(--signal);
-    color: var(--ink-dark);
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 800;
-    font-size: 0.95rem;
-    border-radius: 6px;
-    box-shadow: 2px 2px 0px #000;
-    border: 1.5px solid #fff;
-  }
-  nav{ display:flex; gap: 24px; align-items: center; }
-  nav a{
-    color:var(--muted); font-size:0.92rem; font-weight: 500;
-    padding: 6px 4px;
-    position: relative;
-    transition: color .2s ease;
-  }
-  nav a:hover{ color:var(--signal); }
-  nav a::after{
-    content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 2px;
-    background: var(--signal); transition: width 0.2s ease;
-  }
-  nav a:hover::after{ width: 100%; }
-
-  .nav-cta{
-    background: var(--panel);
-    border: 1px solid var(--line-strong);
-    color: var(--signal) !important;
-    padding: 6px 14px !important;
-    border-radius: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.82rem !important;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-  }
-  .nav-cta:hover{
-    background: var(--signal);
-    color: var(--ink-dark) !important;
-  }
-
-  /* ---------- Comic Bubble & Badges ---------- */
+  .name-display .last{ color: var(--signal); }
   .status-line{
     display:inline-flex; align-items:center; gap:8px;
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.8rem; color: var(--signal);
+    font-size: 0.78rem; color: var(--signal);
     background: var(--signal-dim);
-    border: 1.5px solid rgba(79,209,197,0.35);
-    padding: 6px 14px; border-radius: 999px;
-    margin-bottom: 24px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+    border:1px solid rgba(79,209,197,0.28);
+    padding: 5px 10px; border-radius: 999px;
+    margin-bottom: 22px;
   }
   .status-line .pulse{
-    width:8px; height:8px; border-radius:50%; background:var(--signal);
-    box-shadow: 0 0 8px var(--signal);
-    animation: pulse 2s ease-in-out infinite;
+    width:6px; height:6px; border-radius:50%; background:var(--signal);
+    animation: pulse 2.2s ease-in-out infinite;
   }
   @keyframes pulse{
     0%,100%{ opacity:1; transform:scale(1); }
-    50%{ opacity:0.4; transform:scale(0.75); }
-  }
-
-  /* ---------- Hero Section ---------- */
-  .hero{
-    padding: 72px 0 64px;
-    border-bottom: 2px dashed var(--line);
-  }
-  .hero-grid{
-    display:grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 48px;
-    align-items:center;
-  }
-  .hero-panel-tag{
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    background: var(--amber);
-    color: var(--ink-dark);
-    padding: 2px 8px;
-    border-radius: 3px;
-    margin-bottom: 12px;
-    box-shadow: 2px 2px 0px #000;
+    50%{ opacity:0.35; transform:scale(0.7); }
   }
   .hero h1{
-    font-size: clamp(2.2rem, 4.4vw, 3.25rem);
-    line-height: 1.12;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight:500;
+    line-height: 1.25;
     color: var(--text);
-  }
-  .hero h1 .highlight{
-    color: var(--signal);
-    position: relative;
-    display: inline-block;
   }
   .hero-sub{
     margin-top: 20px;
     color: var(--muted);
     font-size: 1.05rem;
-    max-width: 48ch;
-    line-height: 1.65;
+    max-width: 46ch;
   }
   .hero-links{
-    margin-top: 28px;
-    display:flex; gap: 12px; flex-wrap:wrap;
+    margin-top: 30px;
+    display:flex; gap: 14px; flex-wrap:wrap;
   }
-  
-  .btn{
-    display:inline-flex; align-items:center; gap:8px;
-    padding: 11px 20px;
-    border-radius: var(--radius);
-    font-size: 0.92rem;
-    font-weight:600;
-    transition: all .2s ease;
-    box-shadow: var(--shadow-comic);
-    border: 2px solid transparent;
-  }
-  .btn-primary{
-    background: var(--signal);
-    color: #070B13;
-    border-color: #5ff5e7;
-  }
-  .btn-primary:hover{
-    background: #6cf7ea;
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.6);
-  }
-  .btn-ghost{
-    background: var(--panel);
-    color: var(--text);
-    border-color: var(--line);
-  }
-  .btn-ghost:hover{
-    border-color: var(--signal);
-    color: var(--signal);
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px rgba(79, 209, 197, 0.2);
-  }
-  .btn-amber{
-    background: var(--amber);
-    color: #070B13;
-    border-color: #ffd15c;
-  }
-  .btn-amber:hover{
-    background: #ffb833;
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.6);
-  }
-
   .stats-row{
-    display:flex; gap: 32px; margin-top: 40px;
-    padding-top: 24px; border-top: 2px solid var(--line);
+    display:flex; gap: 36px; margin-top: 46px;
+    padding-top: 28px; border-top: 1px solid var(--line);
   }
   .stat-num{
     font-family:'Space Grotesk', sans-serif;
-    font-size: 2rem; font-weight:800; color: var(--text);
-    display:flex; align-items:baseline; gap:3px;
+    font-size: 1.9rem; font-weight:700; color: var(--text);
+    display:flex; align-items:baseline; gap:2px;
   }
-  .stat-num span.unit{ font-size:1rem; color: var(--signal); font-weight:700; }
+  .stat-num span.unit{ font-size:1rem; color: var(--signal); font-weight:600; }
   .stat-label{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.74rem; color: var(--muted-2);
-    margin-top: 2px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    font-size: 0.72rem; color: var(--muted-2);
+    margin-top: 4px;
   }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 11px 18px;
+    border-radius: var(--radius);
+    text-decoration:none;
+    font-size: 0.92rem;
+    font-weight:500;
+    border: 1px solid var(--line-strong);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .btn-primary{
+    background: var(--signal);
+    color: #0B1420;
+    border-color: var(--signal);
+    font-weight:600;
+  }
+  .btn-primary:hover{ background:#63dbd0; }
+  .btn-ghost{ color: var(--text); }
+  .btn-ghost:hover{ border-color: var(--signal); color: var(--signal); }
 
-  /* ---------- Interactive Diagram Panel ---------- */
-  .diagram-comic-panel{
+  .diagram{
     position:relative;
     background: var(--panel);
-    border: 2px solid var(--comic-border);
+    border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 22px;
-    box-shadow: var(--shadow-comic), 0 0 30px rgba(79,209,197,0.12);
-  }
-  .diagram-comic-panel::before{
-    content: "PANEL 01 // LIVE TELEMETRY";
-    position: absolute;
-    top: -12px;
-    left: 20px;
-    background: var(--panel-2);
-    color: var(--signal);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 2px 10px;
-    border: 1.5px solid var(--comic-border);
-    border-radius: 4px;
-    letter-spacing: 0.08em;
+    padding: 20px;
+    box-shadow: 0 0 0 1px rgba(79,209,197,0.06), 0 30px 60px -30px rgba(79,209,197,0.25);
   }
   .diagram-label{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.74rem; color: var(--muted-2);
+    font-size: 0.72rem; color: var(--muted-2);
     display:flex; justify-content:space-between;
-    margin-bottom: 12px;
-    padding-top: 4px;
+    margin-bottom: 10px;
   }
-  .diagram-label .badge-live{
-    color: var(--signal);
-    background: var(--signal-dim);
-    padding: 1px 6px;
-    border-radius: 3px;
-  }
-
-  svg .route{
-    stroke: var(--muted-2);
-    stroke-width: 1.2;
-    fill:none;
-    stroke-dasharray: 4 4;
-  }
-  svg .route-active{
-    stroke: var(--signal);
-    stroke-width: 1.6;
-    stroke-dasharray: 4 6;
-    animation: dash 5s linear infinite;
-  }
-  svg .route-alert{
-    stroke: var(--amber);
-    stroke-width: 1.6;
-    stroke-dasharray: 4 4;
-    animation: dash-reverse 4s linear infinite;
-  }
-  @keyframes dash{ to{ stroke-dashoffset: -100; } }
-  @keyframes dash-reverse{ to{ stroke-dashoffset: 100; } }
-  
-  svg .node-ring{ fill:none; stroke: var(--comic-border); stroke-width: 1.5; }
-  svg .node-core{ fill: var(--panel-2); stroke: var(--signal); stroke-width:1.8; }
-  svg .node-core-amber{ fill: var(--panel-2); stroke: var(--amber); stroke-width:1.8; }
-  svg .node-core-blue{ fill: var(--panel-2); stroke: var(--comic-blue); stroke-width:1.8; }
-  svg text.node-label{
-    font-family:'IBM Plex Mono', monospace;
-    font-size: 9.5px; fill: var(--muted);
-    font-weight: 600;
-  }
-  svg text.node-title{
-    font-family:'Space Grotesk', sans-serif;
-    font-size: 11px; fill: var(--text);
-    font-weight: 700;
-  }
-
   .terminal{
     margin-top: 14px;
-    background: var(--ink-dark);
-    border: 1.5px solid var(--comic-border);
-    border-radius: 6px;
-    padding: 12px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px 16px;
     font-family:'IBM Plex Mono', monospace;
     font-size: 0.78rem;
     color: var(--muted);
-    min-height: 82px;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+    min-height: 78px;
   }
-  .terminal .l-cmd{ color: var(--text); font-weight: 600; }
   .terminal .l1{ color: var(--signal); }
   .terminal .l2{ color: var(--amber); }
-  .terminal .l3{ color: var(--comic-blue); }
-  .terminal .caret{
-    display:inline-block; width:6px; height:13px; background:var(--signal);
-    vertical-align: middle; margin-left:3px;
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink{ 50%{ opacity:0; } }
 
-  /* ---------- Section Headers ---------- */
-  section{ padding: 76px 0; border-bottom: 2px dashed var(--line); }
+  /* ---------- Section shell ---------- */
+  section{ padding: 76px 0; border-bottom: 1px solid var(--line); }
   section:last-of-type{ border-bottom:none; }
-  
-  .section-head{
-    display:flex; align-items:flex-start; gap: 14px;
-    margin-bottom: 36px;
-  }
-  .section-badge{
+  .section-head{ display:flex; align-items:baseline; gap: 14px; margin-bottom: 40px; }
+  .section-index{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.85rem; font-weight: 700;
-    color: var(--ink-dark);
-    background: var(--signal);
-    padding: 3px 10px; border-radius: 4px;
-    box-shadow: 2px 2px 0px #000;
-    margin-top: 4px;
+    font-size: 0.8rem; color: var(--signal);
+    border: 1px solid rgba(79,209,197,0.3);
+    background: var(--signal-dim);
+    padding: 3px 8px; border-radius: 4px;
   }
-  .section-head h2{
-    font-size: 1.75rem;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-  .section-note{
-    color: var(--muted);
-    font-size: 0.95rem;
-    margin-top: 4px;
-  }
+  .section-head h2{ font-size: 1.55rem; }
 
-  /* ---------- Capability Matrix (Skills) ---------- */
+  /* ---------- Capability matrix ---------- */
   .matrix{
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    display:grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    overflow:hidden;
   }
-  .matrix-col{
-    background: var(--panel);
-    border: 2px solid var(--comic-border);
-    border-radius: var(--radius);
-    padding: 22px 18px;
-    box-shadow: var(--shadow-comic);
-    transition: transform .2s ease, border-color .2s ease;
-  }
-  .matrix-col:hover{
-    border-color: var(--line-strong);
-    transform: translateY(-3px);
-  }
-  .matrix-col-head{
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-    padding-bottom: 10px;
-    border-bottom: 1.5px solid var(--line);
-  }
+  .matrix-col{ background: var(--panel); padding: 22px 20px; }
   .matrix-col h3{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--signal);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.78rem; font-weight:500; color: var(--signal);
+    margin-bottom: 14px;
   }
   .chip-list{ display:flex; flex-wrap:wrap; gap:8px; }
   .chip{
-    font-size: 0.84rem; color: var(--text);
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    padding: 5px 10px; border-radius: 5px;
-    font-family: 'IBM Plex Mono', monospace;
-    transition: all .15s ease;
-  }
-  .chip:hover{
-    border-color: var(--signal);
-    color: var(--signal);
-    background: var(--panel-hover);
-  }
-  .chip.highlight-chip{
-    border-color: rgba(245,166,35,0.4);
-    color: var(--comic-yellow);
-    background: var(--amber-dim);
+    font-size: 0.82rem; color: var(--text);
+    border:1px solid var(--line-strong);
+    padding: 5px 10px; border-radius: 4px;
   }
 
-  /* ---------- Project Comic Panels ---------- */
-  .comic-project-card{
-    border: 2px solid var(--comic-border);
+  /* ---------- Projects ---------- */
+  .project{
+    border: 1px solid var(--line);
     border-radius: var(--radius);
     background: var(--panel);
-    padding: 34px;
-    margin-bottom: 28px;
-    position: relative;
-    box-shadow: var(--shadow-comic);
-    transition: all .25s ease;
+    padding: 32px; margin-bottom: 22px;
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
   }
-  .comic-project-card:hover{
-    border-color: var(--signal);
-    box-shadow: var(--shadow-cyan);
-    transform: translateY(-3px);
+  .project:hover{
+    border-color: rgba(79,209,197,0.35);
+    box-shadow: 0 20px 40px -28px rgba(79,209,197,0.35);
+    transform: translateY(-2px);
   }
-  .comic-project-card::before{
-    content: "FEATURED ARCHITECTURE";
-    position: absolute;
-    top: -12px;
-    left: 24px;
-    background: var(--signal);
-    color: var(--ink-dark);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.68rem;
-    font-weight: 800;
-    padding: 2px 10px;
-    border-radius: 4px;
-    box-shadow: 2px 2px 0px #000;
-    letter-spacing: 0.06em;
-  }
+  .project:last-child{ margin-bottom:0; }
   .project-top{
     display:flex; justify-content:space-between; align-items:flex-start;
-    gap: 18px; flex-wrap:wrap;
-    margin-bottom: 8px;
+    gap: 20px; flex-wrap:wrap; margin-bottom: 6px;
   }
   .project-heading{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .comic-project-card h3{ font-size: 1.4rem; color: var(--text); }
+  .project h3{ font-size: 1.28rem; }
   .status-badge{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.72rem; font-weight: 700;
-    padding: 3px 10px; border-radius: 999px;
-    border: 1.5px solid rgba(79,209,197,0.4);
+    font-size: 0.68rem; letter-spacing: 0.02em;
+    padding: 3px 8px; border-radius: 999px;
+    border: 1px solid rgba(79,209,197,0.35);
     color: var(--signal); background: var(--signal-dim);
-    text-transform: uppercase;
+    white-space:nowrap;
   }
   .project-period{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.8rem; color: var(--muted-2);
-    padding-top: 4px;
+    font-size: 0.78rem; color: var(--muted-2);
+    white-space:nowrap; padding-top:4px;
   }
-  .project-desc{
-    color: var(--muted);
-    margin: 14px 0 0;
-    font-size: 1.02rem;
-    max-width: 72ch;
-    line-height: 1.6;
-  }
-  
-  .comic-callout-grid{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin: 22px 0;
-  }
-  .comic-callout{
-    background: var(--panel-2);
-    border: 1.5px solid var(--comic-border);
-    border-radius: 6px;
-    padding: 14px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
-  }
-  .comic-callout-title{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.76rem;
-    font-weight: 700;
-    color: var(--amber);
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .comic-callout p{
-    font-size: 0.86rem;
-    color: var(--text);
-    line-height: 1.45;
-  }
-
-  .comic-project-card ul{
-    margin: 16px 0 0; padding:0; list-style:none;
+  .project-desc{ color: var(--muted); margin: 12px 0 0; max-width: 68ch; }
+  .project ul{
+    margin: 18px 0 0; padding:0; list-style:none;
     display:flex; flex-direction:column; gap:10px;
   }
-  .comic-project-card li{
-    color: var(--text); font-size: 0.96rem;
-    padding-left: 20px; position:relative;
-  }
-  .comic-project-card li::before{
-    content:"▶";
-    position:absolute; left:0; top:2px;
-    font-size: 0.65rem; color: var(--signal);
+  .project li{ color: var(--text); font-size: 0.95rem; padding-left: 18px; position:relative; }
+  .project li::before{
+    content:""; position:absolute; left:0; top:9px;
+    width:6px; height:1.5px; background: var(--signal);
   }
   .stack-row{
-    margin-top: 22px; padding-top: 18px;
-    border-top: 1.5px solid var(--line);
+    margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line);
     display:flex; flex-wrap:wrap; gap:8px;
   }
   .stack-tag{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 0.76rem; color: var(--muted);
+    font-size: 0.74rem; color: var(--muted);
     border: 1px solid var(--line-strong);
-    background: var(--panel-2);
-    padding: 4px 10px; border-radius: 4px;
-  }
-  .project-links-row{
-    display: flex;
-    gap: 16px;
-    margin-top: 20px;
+    padding: 4px 9px; border-radius: 4px;
   }
   .project-link{
     display:inline-flex; align-items:center; gap:6px;
-    font-size: 0.9rem; font-weight: 600;
-    color: var(--signal);
-    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem; color: var(--signal);
+    text-decoration:none; margin-top: 18px;
   }
   .project-link:hover{ text-decoration:underline; }
 
-  /* ---------- Certificates & Achievements ---------- */
-  .cert-grid{
-    display:grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    gap: 28px;
-    align-items: start;
-  }
-  .cert-cards-stack{
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  .cert-card{
-    display: block;
-    text-decoration: none;
-    border: 2px solid var(--comic-border);
-    border-radius: var(--radius);
-    background: var(--panel);
-    padding: 26px;
-    box-shadow: var(--shadow-comic);
-    position: relative;
-    transition: all .25s ease;
-    cursor: pointer;
-  }
-  .cert-card:hover{
-    border-color: var(--signal);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-cyan);
-  }
-  .cert-card .cert-action{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 16px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    background: var(--signal-dim);
-    border: 1px solid var(--line-strong);
-    color: var(--signal);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.82rem;
-    font-weight: 700;
-    transition: all .2s ease;
-  }
-  .cert-card:hover .cert-action{
-    background: var(--signal);
-    color: var(--ink-dark);
-  }
-  .cert-card::before{
-    content: "VERIFIED CREDENTIAL";
-    position: absolute;
-    top: -11px;
-    right: 20px;
-    background: var(--amber);
-    color: var(--ink-dark);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 2px 8px;
-    border-radius: 3px;
-    box-shadow: 2px 2px 0px #000;
-  }
+  /* ---------- Certificates / achievements ---------- */
+  .cert-grid{ display:grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: start; }
+  .cert-stack{ display:flex; flex-direction:column; gap: 18px; }
+  .cert-card{ border:1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: 22px; }
   .cert-card .cert-date{
-    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; font-weight: 700; color: var(--amber);
-    display:block; margin-bottom:10px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.74rem; color: var(--amber);
+    display:block; margin-bottom:8px;
   }
-  .cert-card h4{ font-family:'Space Grotesk', sans-serif; font-size:1.25rem; font-weight:700; margin:0 0 6px; color: var(--text); }
-  .cert-card .cert-issuer{
-    color: var(--signal);
-    font-size: 0.95rem;
-    font-weight: 600;
-    font-family: 'IBM Plex Mono', monospace;
-    margin-bottom: 12px;
+  .cert-card h4{ font-family:'Space Grotesk', sans-serif; font-size:1rem; font-weight:600; margin:0 0 4px; }
+  .cert-card p{ color:var(--muted); font-size:0.88rem; margin:0; }
+  .cert-card .cert-link{
+    display:inline-block; margin-top: 12px;
+    font-family:'IBM Plex Mono', monospace; font-size: 0.76rem;
+    color: var(--signal); text-decoration:none;
+    border-bottom: 1px solid rgba(79,209,197,0.4);
   }
-  .cert-card p{ color:var(--muted); font-size:0.9rem; line-height: 1.55; }
-  
-  .ach-list{
-    display:flex; flex-direction:column; gap: 14px;
-  }
-  .ach-item{
-    display:flex; gap:16px;
-    background: var(--panel);
-    border: 1.5px solid var(--comic-border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
-  }
-  .ach-item .comic-icon{
-    font-size: 1.2rem;
-    padding-top: 2px;
-  }
-  .ach-item h5{
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.98rem;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-  .ach-item p{ margin:0; color: var(--muted); font-size:0.88rem; line-height: 1.45; }
+  .cert-card .cert-link:hover{ border-color: var(--signal); }
+  .ach-list{ display:flex; flex-direction:column; gap: 18px; }
+  .ach-item{ display:flex; gap:14px; }
+  .ach-item .idx{ font-family:'IBM Plex Mono', monospace; font-size:0.78rem; color:var(--muted-2); padding-top:2px; }
+  .ach-item p{ margin:0; color: var(--text); font-size:0.95rem; }
 
-  /* ---------- Education Timeline ---------- */
-  .timeline{
-    position:relative;
-    padding-left: 36px;
-    max-width: 800px;
-  }
+  /* ---------- Education timeline ---------- */
+  .timeline{ position:relative; padding-left: 28px; }
   .timeline::before{
-    content:""; position:absolute; left:8px; top:12px; bottom:12px;
-    width: 3px;
-    background: linear-gradient(to bottom, var(--signal), var(--amber));
-    border-radius: 2px;
+    content:""; position:absolute; left:5px; top:6px; bottom:6px; width:1px;
+    background: var(--line-strong);
   }
-  .tl-item{
-    position:relative;
-    padding-bottom: 36px;
-  }
+  .tl-item{ position:relative; padding-bottom: 34px; }
   .tl-item:last-child{ padding-bottom:0; }
   .tl-item::before{
-    content:""; position:absolute; left:-36px; top:6px;
-    width: 15px; height: 15px; border-radius:50%;
-    background: var(--ink);
-    border: 3px solid var(--signal);
-    box-shadow: 0 0 0 4px var(--panel);
+    content:""; position:absolute; left:-28px; top:4px;
+    width:9px; height:9px; border-radius:50%;
+    background: var(--ink); border: 1.5px solid var(--signal);
   }
-  .tl-item.tl-school::before{
-    border-color: var(--amber);
-  }
-  .tl-panel{
-    background: var(--panel);
-    border: 2px solid var(--comic-border);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    box-shadow: var(--shadow-comic);
-  }
-  .tl-period{
-    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; font-weight: 700; color: var(--signal);
-    display: inline-block; margin-bottom: 4px;
-  }
-  .tl-period.amber-badge{ color: var(--amber); }
-  .tl-item h4{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.15rem; margin: 2px 0 6px; color: var(--text); }
-  .tl-item .grade-highlight{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 700;
-    background: var(--panel-2);
-    border: 1px solid var(--line-strong);
-    padding: 3px 10px;
-    border-radius: 4px;
-    color: var(--signal);
-    margin-bottom: 6px;
-  }
-  .tl-item .grade-highlight.amber{
-    border-color: rgba(245,166,35,0.4);
-    color: var(--amber);
-  }
-  .tl-item p.tl-sub{ margin:0; color: var(--muted); font-size:0.92rem; }
+  .tl-period{ font-family:'IBM Plex Mono', monospace; font-size:0.76rem; color: var(--muted-2); }
+  .tl-item h4{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:1.05rem; margin: 4px 0 2px; }
+  .tl-item p{ margin:0; color: var(--muted); font-size:0.92rem; }
 
-  /* ---------- Contact & Footer ---------- */
-  footer{
-    padding: 76px 0 44px;
-    background: var(--ink-dark);
-    border-top: 2px solid var(--comic-border);
+  /* ---------- Footer / contact ---------- */
+  footer{ padding: 70px 0 56px; }
+  .footer-grid{ display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:32px; }
+  footer h2{ font-size: 1.9rem; max-width: 14ch; }
+  .footer-sub{ color:var(--muted); margin-top:12px; max-width:42ch; }
+  .footer-links{ display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+  .footer-links a{ text-decoration:none; color:var(--text); font-size:0.95rem; display:flex; align-items:center; gap:8px; }
+  .footer-links a:hover{ color: var(--signal); }
+  .footer-links .copy-btn{
+    background: none; border: 1px solid var(--line-strong); color: var(--muted);
+    border-radius: 4px; padding: 2px 8px; font-size: 0.72rem;
+    font-family:'IBM Plex Mono', monospace; cursor:pointer;
+    transition: border-color .15s ease, color .15s ease;
   }
-  .footer-grid{
-    display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:40px;
-  }
-  footer h2{
-    font-size: 2.1rem;
-    max-width: 16ch;
-    line-height: 1.15;
-  }
-  .footer-sub{ color:var(--muted); margin-top:14px; max-width:44ch; font-size: 1rem; }
-  
-  .footer-contact-box{
-    background: var(--panel);
-    border: 2px solid var(--comic-border);
-    border-radius: var(--radius);
-    padding: 24px 28px;
-    box-shadow: var(--shadow-comic);
-    display:flex; flex-direction:column; gap:14px;
-    min-width: 320px;
-  }
-  .footer-contact-box h3{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.8rem;
-    color: var(--signal);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 4px;
-  }
-  .footer-links{ display:flex; flex-direction:column; gap:12px; }
-  .footer-links a{
-    text-decoration:none; color:var(--text); font-size:0.95rem;
-    display:flex; align-items:center; gap:10px;
-    font-family: 'IBM Plex Mono', monospace;
-    transition: color .15s ease, transform .15s ease;
-  }
-  .footer-links a:hover{ color: var(--signal); transform: translateX(3px); }
-  .footer-links a .icon{ font-size: 1.1rem; }
-
+  .footer-links .copy-btn:hover{ border-color: var(--signal); color: var(--signal); }
+  .footer-links .copy-row{ display:flex; align-items:center; gap:10px; }
   .footer-bottom{
-    margin-top: 56px; padding-top: 24px; border-top: 1.5px solid var(--line);
-    display:flex; justify-content:space-between; color: var(--muted-2); font-size:0.84rem;
-    font-family:'IBM Plex Mono', monospace;
-    flex-wrap:wrap; gap:12px;
+    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line);
+    display:flex; justify-content:space-between; color: var(--muted-2); font-size:0.8rem;
+    font-family:'IBM Plex Mono', monospace; flex-wrap:wrap; gap:10px;
   }
 
-  /* Responsive Design */
-  @media (max-width: 900px){
-    .hero-grid{ grid-template-columns: 1fr; gap: 36px; }
+  @media (max-width: 860px){
+    .hero-grid{ grid-template-columns: 1fr; }
     .matrix{ grid-template-columns: repeat(2,1fr); }
     .cert-grid{ grid-template-columns: 1fr; }
-    .comic-callout-grid{ grid-template-columns: 1fr; }
     nav{ display:none; }
     .wrap{ padding: 0 20px; }
-    .footer-contact-box{ min-width: 100%; }
-  }
-
-  @media (max-width: 540px){
-    .matrix{ grid-template-columns: 1fr; }
-    .stats-row{ flex-direction: column; gap: 16px; }
-    .hero h1{ font-size: 2rem; }
-    .comic-project-card{ padding: 22px 18px; }
+    section{ padding: 56px 0; }
   }
 </style>
 </head>
 <body>
 
+<canvas id="netbg"></canvas>
+<div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+
 <header>
   <div class="header-row">
-    <a href="#top" class="brand">
-      <span class="brand-badge">JK</span>
-      <span>Jashan Kamboj</span>
-    </a>
-    <nav>
-      <a href="#projects">Projects</a>
-      <a href="#skills">Skills</a>
-      <a href="#certificates">Certificates</a>
-      <a href="#education">Education</a>
-      <a href="#contact" class="nav-cta">Contact</a>
+    <div class="brand"><span class="brand-dot"></span>Jashan Kamboj</div>
+    <nav id="navLinks">
+      <a href="#work" data-section="work">Projects</a>
+      <a href="#skills" data-section="skills">Skills</a>
+      <a href="#achievements" data-section="achievements">Certificates</a>
+      <a href="#education" data-section="education">Education</a>
+      <a href="#contact" data-section="contact">Contact</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- ==================== HERO SECTION ==================== -->
+  <!-- ==================== HERO ==================== -->
   <section class="hero" id="top">
     <div class="hero-grid">
       <div>
-        <div class="status-line">
-          <span class="pulse"></span>
-          <span>Open to Software &amp; IoT Engineering Roles</span>
-        </div>
-        
-        <span class="hero-panel-tag">HERO BRIEF</span>
-        <h1>Pioneering <span class="highlight">Smart Systems</span>, IoT intelligence &amp; Applied AI.</h1>
-        <p class="hero-sub">
-          Computer Science undergrad with hands-on expertise building real-time telemetry architectures, sensor-driven IoT automation, and intelligent AI anomaly classifiers.
-        </p>
-
+        <h2 class="name-display">JASHAN<br>KAM<span class="last">BOJ</span></h2>
+        <div class="status-line"><span class="pulse"></span>open to internships &amp; entry-level roles</div>
+        <h1>Engineering real-time IoT architectures &amp; applied intelligent systems.</h1>
+        <p class="hero-sub">CSE undergrad focused on smart telemetry, sensor automation, and data intelligence — building robust systems that monitor, detect, and isolate anomalies in real-world infrastructure.</p>
         <div class="hero-links">
-          <a class="btn btn-primary" href="mailto:bedi.jashan07@gmail.com">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            Email Me
-          </a>
-          <a class="btn btn-ghost" href="https://github.com/bedijashan07-rgb" target="_blank" rel="noopener">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-            GitHub
-          </a>
-          <a class="btn btn-ghost" href="https://www.linkedin.com/in/jashan-kamboj00" target="_blank" rel="noopener">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            LinkedIn
-          </a>
-          <a class="btn btn-amber" href="tel:+917015427572">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-            Call
-          </a>
+          <a class="btn btn-primary" href="mailto:bedi.jashan07@gmail.com">Email me</a>
+          <a class="btn btn-ghost" href="https://github.com/bedijashan07-rgb" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/jashan-kamboj00" target="_blank" rel="noopener">LinkedIn</a>
         </div>
-
         <div class="stats-row">
           <div>
-            <div class="stat-num">6.8<span class="unit">cgpa</span></div>
-            <div class="stat-label">B.Tech (CSE)</div>
+            <div class="stat-num"><span class="num-val" data-target="1" data-decimals="0">0</span></div>
+            <div class="stat-label">platform shipped</div>
           </div>
           <div>
-            <div class="stat-num">IoT<span class="unit">+AI</span></div>
-            <div class="stat-label">Core Focus</div>
+            <div class="stat-num"><span class="num-val" data-target="6.8" data-decimals="1">0.0</span><span class="unit">cgpa</span></div>
+            <div class="stat-label">b.tech, cse</div>
           </div>
           <div>
-            <div class="stat-num">10<span class="unit">+</span></div>
-            <div class="stat-label">Languages &amp; Tools</div>
+            <div class="stat-num"><span class="num-val" data-target="10" data-decimals="0">0</span><span class="unit">+</span></div>
+            <div class="stat-label">languages &amp; tools</div>
           </div>
         </div>
       </div>
 
-      <!-- Comic Diagram Panel -->
-      <div class="diagram-comic-panel">
-        <div class="diagram-label">
-          <span>Smart Leakage Detection // Architecture</span>
-          <span class="badge-live">● 4 NODES LIVE</span>
-        </div>
-        
-        <svg viewBox="0 0 340 260" width="100%" height="auto" role="img" aria-label="Smart Water Leakage Detection System Architecture Diagram">
-          <!-- Connectors -->
-          <path class="route-active" d="M 170 130 C 120 90, 80 70, 55 55" />
-          <path class="route-active" d="M 170 130 C 220 90, 260 70, 285 55" />
-          <path class="route-alert" d="M 170 130 C 120 170, 80 190, 55 205" />
-          <path class="route-active" d="M 170 130 C 220 170, 260 190, 285 205" />
-
-          <!-- Center Node: Gateway / Controller -->
-          <circle class="node-ring" cx="170" cy="130" r="32" />
-          <circle class="node-core" cx="170" cy="130" r="22" />
-          <text class="node-title" x="170" y="134" text-anchor="middle" fill="#4FD1C5">JK · MCU</text>
-
-          <!-- Node 1: Flow Rate Sensors (Top Left) -->
-          <circle class="node-ring" cx="55" cy="55" r="16" />
-          <circle class="node-core-blue" cx="55" cy="55" r="10" />
-          <text class="node-label" x="55" y="32" text-anchor="middle">Flow Sensors</text>
-
-          <!-- Node 2: Acoustic Probes (Top Right) -->
-          <circle class="node-ring" cx="285" cy="55" r="16" />
-          <circle class="node-core" cx="285" cy="55" r="10" />
-          <text class="node-label" x="285" y="32" text-anchor="middle">Acoustic Probes</text>
-
-          <!-- Node 3: Solenoid Valve Control (Bottom Left) -->
-          <circle class="node-ring" cx="55" cy="205" r="16" />
-          <circle class="node-core-amber" cx="55" cy="205" r="10" />
-          <text class="node-label" x="55" y="232" text-anchor="middle">Auto-Shutoff Valve</text>
-
-          <!-- Node 4: Cloud & AI Alert Hub (Bottom Right) -->
-          <circle class="node-ring" cx="285" cy="205" r="16" />
-          <circle class="node-core" cx="285" cy="205" r="10" />
-          <text class="node-label" x="285" y="232" text-anchor="middle">AI Cloud Alerts</text>
-        </svg>
-
+      <div class="diagram">
+        <div class="diagram-label"><span>status.log</span><span>system online</span></div>
         <div class="terminal" id="terminal" aria-hidden="true"></div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== SKILLS / CAPABILITY MATRIX ==================== -->
+  <!-- ==================== SKILLS ==================== -->
   <section id="skills">
     <div class="section-head">
-      <span class="section-badge mono">01</span>
-      <div>
-        <h2>Capability Matrix</h2>
-        <p class="section-note">Core technologies, toolsets, and engineering domains.</p>
-      </div>
+      <span class="section-index mono">01</span>
+      <h2>Capability matrix</h2>
     </div>
-
     <div class="matrix">
       <div class="matrix-col">
-        <div class="matrix-col-head">
-          <h3>Languages</h3>
-        </div>
+        <h3>Languages</h3>
         <div class="chip-list">
-          <span class="chip">C</span>
-          <span class="chip">C++</span>
-          <span class="chip">Python</span>
-          <span class="chip">Java</span>
-          <span class="chip">HTML5</span>
-          <span class="chip">CSS3</span>
-          <span class="chip">JavaScript</span>
-          <span class="chip">SQL</span>
+          <span class="chip">C</span><span class="chip">C++</span><span class="chip">Java</span>
+          <span class="chip">Python</span><span class="chip">HTML</span><span class="chip">CSS</span>
+          <span class="chip">JavaScript</span><span class="chip">SQL</span>
         </div>
       </div>
-
       <div class="matrix-col">
-        <div class="matrix-col-head">
-          <h3>AI &amp; Data</h3>
-        </div>
+        <h3>Systems &amp; IoT</h3>
         <div class="chip-list">
-          <span class="chip highlight-chip">Artificial Intelligence</span>
-          <span class="chip">Infosys Springboard AI</span>
-          <span class="chip">Machine Learning Basics</span>
-          <span class="chip">Data Analysis</span>
-          <span class="chip">Pattern Classification</span>
-          <span class="chip">NumPy / Pandas</span>
+          <span class="chip">Python</span><span class="chip">C</span><span class="chip">C++</span>
+          <span class="chip">ESP32</span><span class="chip">Arduino</span><span class="chip">Linux</span>
+          <span class="chip">Embedded C++</span>
         </div>
       </div>
-
       <div class="matrix-col">
-        <div class="matrix-col-head">
-          <h3>IoT &amp; Systems</h3>
-        </div>
+        <h3>Tools &amp; Hardware</h3>
         <div class="chip-list">
-          <span class="chip highlight-chip">Microcontrollers</span>
-          <span class="chip">Arduino / ESP32</span>
-          <span class="chip">Flow &amp; Acoustic Sensors</span>
-          <span class="chip">Real-time Telemetry</span>
-          <span class="chip">Embedded C/C++</span>
-          <span class="chip">MQTT / HTTP</span>
-        </div>
-      </div>
-
-      <div class="matrix-col">
-        <div class="matrix-col-head">
-          <h3>Tools &amp; Workstyle</h3>
-        </div>
-        <div class="chip-list">
-          <span class="chip">Git</span>
-          <span class="chip">GitHub</span>
+          <span class="chip">Flow Sensors</span><span class="chip">Acoustic Probes</span>
+          <span class="chip">MQTT</span><span class="chip">Git</span><span class="chip">GitHub</span>
           <span class="chip">VS Code</span>
-          <span class="chip">Linux</span>
-          <span class="chip">System Debugging</span>
-          <span class="chip">Rapid Prototyping</span>
+        </div>
+      </div>
+      <div class="matrix-col">
+        <h3>Working style</h3>
+        <div class="chip-list">
+          <span class="chip">Problem solving</span><span class="chip">Team collaboration</span>
+          <span class="chip">Adaptability</span><span class="chip">Rapid prototyping</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ==================== PROJECTS ==================== -->
-  <section id="projects">
+  <section id="work">
     <div class="section-head">
-      <span class="section-badge mono">02</span>
-      <div>
-        <h2>Featured Engineering Projects</h2>
-        <p class="section-note">Hardware and software solutions addressing real-world telemetry and resource management challenges.</p>
-      </div>
+      <span class="section-index mono">02</span>
+      <h2>Projects</h2>
     </div>
 
-    <!-- MAIN FEATURED PROJECT: Smart Water Leakage Detection System -->
-    <div class="comic-project-card">
+    <div class="project">
       <div class="project-top">
         <div class="project-heading">
           <h3>Smart Water Leakage Detection System</h3>
-          <span class="status-badge">IoT · Real-Time Systems</span>
+          <span class="status-badge">systems / iot</span>
         </div>
         <span class="project-period">Hardware + Cloud Pipeline</span>
       </div>
-      
-      <p class="project-desc">
-        An intelligent, automated IoT system engineered to monitor pipeline fluid dynamics in real time, detect anomalous pressure and flow drops indicative of leakage, and trigger immediate solenoid valve isolation.
-      </p>
-
-      <div class="comic-callout-grid">
-        <div class="comic-callout">
-          <div class="comic-callout-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-            1. SENSING LAYER
-          </div>
-          <p>Dual-node Hall effect flow sensors coupled with acoustic vibration pickups capture pipeline throughput and high-frequency leak turbulence.</p>
-        </div>
-
-        <div class="comic-callout">
-          <div class="comic-callout-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line></svg>
-            2. EDGE PROCESSING
-          </div>
-          <p>Microcontroller computes differential flow coefficients; triggers emergency relay shutoff within milliseconds when differential bounds exceed safe thresholds.</p>
-        </div>
-
-        <div class="comic-callout">
-          <div class="comic-callout-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            3. INSTANT ALERTS
-          </div>
-          <p>Streams live flow metrics over MQTT/HTTP telemetry to a responsive dashboard with automated SMS/email alerts dispatched during critical events.</p>
-        </div>
-      </div>
-
+      <p class="project-desc">An automated IoT system engineered to monitor pipeline fluid dynamics in real time, detect anomalous pressure and flow drops indicative of leakage, and trigger immediate solenoid valve isolation.</p>
       <ul>
-        <li>Engineered low-latency firmware in C/C++ for precise pulse counting and continuous flow rate calculations (L/min).</li>
-        <li>Implemented failsafe solenoid valve cut-off mechanisms to prevent water waste and property flooding automatically.</li>
-        <li>Integrated cloud telemetry pipeline sending structured JSON payload data for historical analytics and remote manual override.</li>
+        <li>Engineered low-latency firmware in C/C++ for microcontrollers (ESP32/Arduino) to process high-precision pulse telemetry from Hall-effect flow sensors and acoustic vibration pickups.</li>
+        <li>Implemented automated failsafe relay actuation to cut off solenoid shutoff valves within milliseconds of detecting differential flow rate anomalies.</li>
+        <li>Configured cloud telemetry pipeline streaming structured JSON payloads over MQTT and HTTP to a live dashboard with automated alert dispatches.</li>
       </ul>
-
       <div class="stack-row">
         <span class="stack-tag">IoT</span>
-        <span class="stack-tag">ESP32 / Arduino</span>
+        <span class="stack-tag">ESP32</span>
+        <span class="stack-tag">Arduino</span>
         <span class="stack-tag">Embedded C++</span>
         <span class="stack-tag">Python</span>
         <span class="stack-tag">Flow Sensors</span>
         <span class="stack-tag">Acoustic Probes</span>
-        <span class="stack-tag">MQTT / HTTP</span>
+        <span class="stack-tag">MQTT</span>
         <span class="stack-tag">Relay Control</span>
-        <span class="stack-tag">Web Dashboard</span>
       </div>
-
-      <div class="project-links-row">
-        <a class="project-link" href="https://github.com/bedijashan07-rgb" target="_blank" rel="noopener">
-          Explore Code on GitHub →
-        </a>
-      </div>
+      <a class="project-link" href="https://github.com/bedijashan07-rgb" target="_blank" rel="noopener">View on GitHub →</a>
     </div>
   </section>
 
   <!-- ==================== CERTIFICATES & ACHIEVEMENTS ==================== -->
-  <section id="certificates">
+  <section id="achievements">
     <div class="section-head">
-      <span class="section-badge mono">03</span>
-      <div>
-        <h2>Certificates &amp; Achievements</h2>
-        <p class="section-note">Formal coursework, specialized training, and key milestones.</p>
-      </div>
+      <span class="section-index mono">03</span>
+      <h2>Certificates &amp; achievements</h2>
     </div>
-
     <div class="cert-grid">
-      <!-- Certificate Cards Column -->
-      <div class="cert-cards-stack">
-        <!-- Certificate 1: Infosys Springboard AI -->
-        <a class="cert-card" href="certificate.pdf" target="_blank" rel="noopener" title="Open Infosys Springboard AI Certificate (PDF)">
+      <div class="cert-stack">
+        <div class="cert-card">
           <span class="cert-date">INFOSYS SPRINGBOARD</span>
           <h4>Introduction to Artificial Intelligence</h4>
-          <div class="cert-issuer">Infosys Springboard Certification</div>
-          <p>
-            Mastered fundamental concepts of Artificial Intelligence, neural network foundations, heuristic search algorithms, decision trees, and ethics in AI systems. Applied core machine learning principles toward automated classification and intelligent sensor processing.
-          </p>
-          <div class="cert-action">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>View AI Certificate (PDF) ↗</span>
-          </div>
-        </a>
+          <p>Infosys Springboard</p>
+          <a class="cert-link" href="https://drive.google.com/file/d/1yV5skZxbmIcS0741ZfgWJ3d12Xn-6BgS/view?usp=sharing" target="_blank" rel="noopener">View certificate →</a>
+        </div>
 
-        <!-- Certificate 2: Cisco Networking Basics -->
-        <a class="cert-card" href="cisco_networking_basics.pdf" target="_blank" rel="noopener" title="Open Cisco Networking Basics Certificate (PDF)">
+        <div class="cert-card">
           <span class="cert-date">CISCO NETWORKING ACADEMY</span>
           <h4>Networking Basics</h4>
-          <div class="cert-issuer">Cisco Academy Credential</div>
-          <p>
-            Mastered core networking architecture, IPv4/IPv6 addressing schemes, TCP/UDP protocols, packet routing, switching foundations, network topologies, and diagnostic tools (Wireshark, ping, traceroute).
-          </p>
-          <div class="cert-action">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>View Cisco Certificate (PDF) ↗</span>
-          </div>
-        </a>
+          <p>Cisco Networking Academy</p>
+          <a class="cert-link" href="https://drive.google.com/file/d/1-wKvwBw8tExaoxpP_VcyUFzR6CPp8GtX/view?usp=sharing" target="_blank" rel="noopener">View certificate →</a>
+        </div>
+
+        <div class="cert-card">
+          <span class="cert-date">INFOSYS SPRINGBOARD</span>
+          <h4>Programming Fundamentals using Python</h4>
+          <p>Infosys Springboard</p>
+          <a class="cert-link" href="https://drive.google.com/file/d/1ssjJFB7BCI4B5aO0hZtT-0BNR3V-nJsS/view?usp=sharing" target="_blank" rel="noopener">View certificate →</a>
+        </div>
       </div>
 
-      <!-- Achievements List -->
       <div class="ach-list">
         <div class="ach-item">
-          <div class="comic-icon">💡</div>
-          <div>
-            <h5>Smart IoT System Design</h5>
-            <p>Designed and built an end-to-end Smart Water Leakage Detection System utilizing microcontrollers, sensor arrays, and automatic shutoff mechanisms.</p>
-          </div>
+          <span class="idx mono">—</span>
+          <p>Completed professional engineering coursework across Artificial Intelligence, Computer Networking architectures, and Python Programming fundamentals.</p>
         </div>
-
         <div class="ach-item">
-          <div class="comic-icon">⚡</div>
-          <div>
-            <h5>Applied AI &amp; Problem Solving</h5>
-            <p>Skilled in Python, C, C++, and Java with an emphasis on algorithms, data structures, and AI-driven data intelligence.</p>
-          </div>
+          <span class="idx mono">—</span>
+          <p>Engineered an end-to-end Smart Water Leakage Detection System utilizing microcontrollers, dual-sensor arrays, and automated cut-off mechanisms.</p>
         </div>
-
         <div class="ach-item">
-          <div class="comic-icon">🚀</div>
-          <div>
-            <h5>Continuous Technical Evolution</h5>
-            <p>Active open-source contributor on GitHub managing version control, system documentation, and collaborative development pipelines.</p>
-          </div>
+          <span class="idx mono">—</span>
+          <p>Developed and maintained software and embedded codebases across C, C++, Python, and JavaScript, leveraging Git and GitHub version control.</p>
         </div>
       </div>
     </div>
@@ -1134,112 +579,64 @@
   <!-- ==================== EDUCATION ==================== -->
   <section id="education">
     <div class="section-head">
-      <span class="section-badge mono">04</span>
-      <div>
-        <h2>Education</h2>
-        <p class="section-note">Academic foundation and schooling history.</p>
-      </div>
+      <span class="section-index mono">04</span>
+      <h2>Education</h2>
     </div>
-
     <div class="timeline">
-      <!-- Degree Item -->
       <div class="tl-item">
-        <div class="tl-panel">
-          <span class="tl-period">UNDERGRADUATE</span>
-          <h4>Bachelor of Technology (B.Tech) — Computer Science and Engineering</h4>
-          <div>
-            <span class="grade-highlight">CGPA: 6.8</span>
-          </div>
-          <p class="tl-sub">
-            Focused on Computer Science fundamentals, Software Engineering, Object-Oriented Programming, Database Management Systems, IoT architectures, and Artificial Intelligence.
-          </p>
-        </div>
+        <span class="tl-period mono">Aug 2025 – Present</span>
+        <h4>Lovely Professional University, Phagwara, Punjab</h4>
+        <p>B.Tech Computer Science and Engineering — CGPA 6.8</p>
       </div>
-
-      <!-- Higher Secondary School -->
-      <div class="tl-item tl-school">
-        <div class="tl-panel">
-          <span class="tl-period amber-badge">HIGHER SECONDARY (CLASS XII)</span>
-          <h4>Hari Om Shiv Om Public School, Radaur</h4>
-          <div>
-            <span class="grade-highlight amber">Score: 70%</span>
-          </div>
-          <p class="tl-sub">
-            Completed Senior Secondary Education with core focus in Science and Mathematics.
-          </p>
-        </div>
+      <div class="tl-item">
+        <span class="tl-period mono">May 2023 – Mar 2025</span>
+        <h4>Hari Om Shiv Om Public School, Radaur</h4>
+        <p>Higher Secondary Education — 70%</p>
       </div>
-
-      <!-- Secondary School -->
-      <div class="tl-item tl-school">
-        <div class="tl-panel">
-          <span class="tl-period amber-badge">SECONDARY EDUCATION (CLASS X)</span>
-          <h4>Hari Om Shiv Om Public School, Radaur</h4>
-          <div>
-            <span class="grade-highlight amber">Score: 75%</span>
-          </div>
-          <p class="tl-sub">
-            Completed Secondary Schooling with distinction in core academics and scientific foundations.
-          </p>
-        </div>
+      <div class="tl-item">
+        <span class="tl-period mono">Jun 2021 – Mar 2023</span>
+        <h4>Hari Om Shiv Om Public School, Radaur</h4>
+        <p>Secondary Education — 75%</p>
       </div>
     </div>
   </section>
 
-  <!-- ==================== CONTACT & FOOTER ==================== -->
+  <!-- ==================== FOOTER ==================== -->
   <footer id="contact">
-    <div class="wrap">
-      <div class="footer-grid">
-        <div>
-          <h2>Let's build intelligent, reliable systems together.</h2>
-          <p class="footer-sub">
-            Open to engineering internships, software roles, and IoT project collaborations. Feel free to get in touch!
-          </p>
-        </div>
-
-        <div class="footer-contact-box">
-          <h3>Direct Contact Channels</h3>
-          <div class="footer-links">
-            <a href="mailto:bedi.jashan07@gmail.com">
-              <span class="icon">✉</span>
-              <span>bedi.jashan07@gmail.com</span>
-            </a>
-            <a href="tel:+917015427572">
-              <span class="icon">📞</span>
-              <span>+91 7015427572</span>
-            </a>
-            <a href="https://github.com/bedijashan07-rgb" target="_blank" rel="noopener">
-              <span class="icon">💻</span>
-              <span>github.com/bedijashan07-rgb</span>
-            </a>
-            <a href="https://www.linkedin.com/in/jashan-kamboj00" target="_blank" rel="noopener">
-              <span class="icon">🔗</span>
-              <span>linkedin.com/in/jashan-kamboj00</span>
-            </a>
-          </div>
-        </div>
+    <div class="footer-grid">
+      <div>
+        <h2>Let's talk systems and engineering.</h2>
+        <p class="footer-sub">Open to internships and entry-level roles in software engineering, IoT systems, or backend development.</p>
       </div>
-
-      <div class="footer-bottom">
-        <span>© 2026 Jashan Kamboj — Computer Science &amp; Engineering</span>
-        <span>Radaur, Haryana, India</span>
+      <div class="footer-links">
+        <div class="copy-row">
+          <a href="mailto:bedi.jashan07@gmail.com">bedi.jashan07@gmail.com</a>
+          <button class="copy-btn" id="copyEmailBtn" type="button">copy</button>
+        </div>
+        <a href="https://github.com/bedijashan07-rgb" target="_blank" rel="noopener">github.com/bedijashan07-rgb</a>
+        <a href="https://www.linkedin.com/in/jashan-kamboj00" target="_blank" rel="noopener">linkedin.com/in/jashan-kamboj00</a>
       </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Jashan Kamboj</span>
+      <span>Radaur, Haryana</span>
     </div>
   </footer>
 
 </main>
 
-<!-- Interactive Live Terminal Typewriter Script -->
+<button class="back-to-top" id="backToTop" type="button" aria-label="Back to top">↑</button>
+
 <script>
 (function(){
   var el = document.getElementById('terminal');
   if(!el) return;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var lines = [
-    { text: '$ whoami', cls: 'l-cmd' },
-    { text: 'jashan_kamboj — b.tech cse', cls: 'l1' },
-    { text: '$ status', cls: 'l-cmd' },
-    { text: 'available for engineering & software roles', cls: 'l2' }
+    { text: '$ whoami', cls: '' },
+    { text: 'jashan_kamboj — cse · iot · systems', cls: 'l1' },
+    { text: '$ status --check', cls: '' },
+    { text: 'available for internships & engineering roles', cls: 'l2' }
   ];
 
   if(reduce){
@@ -1261,10 +658,10 @@
       div.textContent = line.text.slice(0, ci);
       if(ci < line.text.length){
         ci++;
-        setTimeout(tick, 20);
+        setTimeout(tick, 22);
       } else {
         li++;
-        setTimeout(typeLine, 240);
+        setTimeout(typeLine, 260);
       }
     })();
   }
@@ -1272,8 +669,160 @@
     entries.forEach(function(e){
       if(e.isIntersecting){ typeLine(); obs.disconnect(); }
     });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.4 });
   obs.observe(el);
+})();
+
+/* ---------- Network background canvas ---------- */
+(function(){
+  var canvas = document.getElementById('netbg');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var w, h, nodes = [];
+  var NODE_COUNT = 46;
+  var LINK_DIST = 130;
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  function makeNodes(){
+    nodes = [];
+    for(var i=0;i<NODE_COUNT;i++){
+      nodes.push({
+        x: Math.random()*w, y: Math.random()*h,
+        vx: (Math.random()-0.5)*0.18, vy: (Math.random()-0.5)*0.18
+      });
+    }
+  }
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(var i=0;i<nodes.length;i++){
+      var n = nodes[i];
+      if(!reduce){
+        n.x += n.vx; n.y += n.vy;
+        if(n.x < 0 || n.x > w) n.vx *= -1;
+        if(n.y < 0 || n.y > h) n.vy *= -1;
+      }
+    }
+    for(var i=0;i<nodes.length;i++){
+      for(var j=i+1;j<nodes.length;j++){
+        var a = nodes[i], b = nodes[j];
+        var dx = a.x-b.x, dy = a.y-b.y;
+        var dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < LINK_DIST){
+          ctx.strokeStyle = 'rgba(79,209,197,' + (0.14*(1-dist/LINK_DIST)) + ')';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    for(var i=0;i<nodes.length;i++){
+      ctx.fillStyle = 'rgba(79,209,197,0.55)';
+      ctx.beginPath();
+      ctx.arc(nodes[i].x, nodes[i].y, 1.4, 0, Math.PI*2);
+      ctx.fill();
+    }
+    if(!reduce) requestAnimationFrame(draw);
+  }
+
+  resize(); makeNodes(); draw();
+  window.addEventListener('resize', function(){ resize(); makeNodes(); if(reduce) draw(); });
+})();
+
+/* ---------- Scroll progress bar ---------- */
+(function(){
+  var bar = document.getElementById('progressBar');
+  if(!bar) return;
+  function update(){
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+/* ---------- Scrollspy nav ---------- */
+(function(){
+  var links = document.querySelectorAll('#navLinks a');
+  if(!links.length) return;
+  var sections = Array.prototype.map.call(links, function(l){
+    return document.getElementById(l.dataset.section);
+  }).filter(Boolean);
+
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        links.forEach(function(l){ l.classList.remove('active'); });
+        var match = document.querySelector('#navLinks a[data-section="' + entry.target.id + '"]');
+        if(match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(function(s){ spy.observe(s); });
+})();
+
+/* ---------- Animated stat counters ---------- */
+(function(){
+  var nums = document.querySelectorAll('.num-val');
+  if(!nums.length) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animate(el){
+    var target = parseFloat(el.dataset.target);
+    var decimals = parseInt(el.dataset.decimals, 10) || 0;
+    if(reduce){ el.textContent = target.toFixed(decimals); return; }
+    var duration = 900, start = null;
+    function step(ts){
+      if(!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if(progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  var statObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        animate(entry.target);
+        statObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.6 });
+  nums.forEach(function(n){ statObs.observe(n); });
+})();
+
+/* ---------- Back to top ---------- */
+(function(){
+  var btn = document.getElementById('backToTop');
+  if(!btn) return;
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 600);
+  }, { passive: true });
+  btn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+
+/* ---------- Copy email ---------- */
+(function(){
+  var btn = document.getElementById('copyEmailBtn');
+  if(!btn) return;
+  btn.addEventListener('click', function(){
+    navigator.clipboard.writeText('bedi.jashan07@gmail.com').then(function(){
+      var original = btn.textContent;
+      btn.textContent = 'copied';
+      setTimeout(function(){ btn.textContent = original; }, 1600);
+    }).catch(function(){});
+  });
 })();
 </script>
 
