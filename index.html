@@ -1,3 +1,55 @@
+  if(!nums.length) return;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animate(el){
+    var target = parseFloat(el.dataset.target);
+    var decimals = parseInt(el.dataset.decimals, 10) || 0;
+    if(reduce){ el.textContent = target.toFixed(decimals); return; }
+    var duration = 900, start = null;
+    function step(ts){
+      if(!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if(progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var statObs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        animate(entry.target);
+        statObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.6 });
+  nums.forEach(function(n){ statObs.observe(n); });
+})();
+/* ---------- Back to top ---------- */
+(function(){
+  var btn = document.getElementById('backToTop');
+  if(!btn) return;
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('visible', window.scrollY > 600);
+  }, { passive: true });
+  btn.addEventListener('click', function(){
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+/* ---------- Copy email ---------- */
+(function(){
+  var btn = document.getElementById('copyEmailBtn');
+  if(!btn) return;
+  btn.addEventListener('click', function(){
+    navigator.clipboard.writeText('bedi.jashan07@gmail.com').then(function(){
+      var original = btn.textContent;
+      btn.textContent = 'copied';
+      setTimeout(function(){ btn.textContent = original; }, 1600);
+    }).catch(function(){});
+  });
+})();
+</script>
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
